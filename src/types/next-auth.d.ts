@@ -14,3 +14,10 @@ declare module '@auth/core/types'{
         } & DefaultSession['user']
     }
 }
+
+declare module '@auth/core/types' {
+    interface JWT {
+      id?: string;
+      fullname?: string;
+    }
+  }
