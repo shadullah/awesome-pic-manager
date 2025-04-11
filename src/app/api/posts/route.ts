@@ -122,3 +122,38 @@ export async function POST(req: Request) {
         }, { status: 500 });
     }
 }
+
+export async function GET() {
+    await dbConnect()
+
+    try {
+        const session = await auth();
+        console.log("Session:", session?.user?.id || "No session");
+
+        if (!session || !session.user) {
+            return Response.json({
+                success: false,
+                message: "Authentication required"
+            }, { status: 401 });
+        }
+
+        const user = await UserModel.findOne({ _id: session?.user?.id });
+            if (!user) {
+                console.error("User not found:", session.user.id);
+                return Response.json({
+                    success: false,
+                    message: "User not found"
+                }, { status: 404 });
+            }
+
+            return Response.json({
+                success:true, posts:user.posts
+            }, {status:200})
+    } catch (error) {
+        console.error("Error Reading the posts:", error);
+        return Response.json({
+            success: false, 
+            message: `Error Reading post: ${error instanceof Error ? error.message : 'Unknown error'}`
+        }, { status: 500 });
+    }
+}
