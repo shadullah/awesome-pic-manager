@@ -42,6 +42,7 @@ const Transition = React.forwardRef(function Transition(
 const HomePage = () => {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleOpen = (imgUrl: string) => {
@@ -55,23 +56,29 @@ const HomePage = () => {
   };
 
   const [posts, setPosts] = useState<Post[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("/api/posts", {
+        const res = await fetch(`/api/posts?page=${currentPage}`, {
           method: "GET",
         });
         const data = await res.json();
         if (data.success) {
+          console.log(data);
+          setTotalPages(data?.ttlpages);
           setPosts(data.posts);
         }
       } catch (error) {
         console.log("error fetching posts", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPosts();
-  }, []);
+  }, [currentPage]);
 
   const handleDelete = async (postId: string) => {
     const confirmation = window.confirm("Are you sure to delete the post?");
@@ -117,83 +124,139 @@ const HomePage = () => {
             )}
           </Typography>
         </Box>
-        <Grid container spacing={4} sx={{ my: 12, mx: 4 }}>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-            <Link href="/dashboard/post/new" passHref>
-              <Box
-                sx={{
-                  border: "2px dashed cyan",
-                  borderRadius: 2,
-                  padding: 4,
-                  height: "100%",
-                  textAlign: "center",
-                  transition: "0.3s",
-                  "&:hover": {
-                    backgroundColor: "rgba(129, 196, 233, 0.1)",
-                    cursor: "pointer",
-                  },
-                }}
-              >
-                <IconButton size="large" sx={{ color: "cyan" }}>
-                  <ControlPointOutlinedIcon
-                    sx={{ fontSize: 100, mx: "auto" }}
-                  />
-                </IconButton>
-                <Typography variant="body1" sx={{ fontWeight: "bold", mt: 1 }}>
-                  Add New Post
-                </Typography>
-              </Box>
-            </Link>
-          </Grid>
-          {posts?.map((post) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post._id}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  transition: "0.3s",
-                  "&:hover": {
-                    transform: "scale(1.03)",
-                    boxShadow: 6,
-                  },
-                }}
-              >
-                <CardMedia
-                  onClick={() => handleOpen(post.imgPost)}
-                  component="img"
-                  image={post.imgPost}
-                  alt="Post Image"
-                  sx={{
-                    objectFit: "cover",
-                    height: "300px",
-                    ":hover": { cursor: "pointer" },
-                  }}
-                />
-                <CardContent
-                  sx={{
-                    backgroundColor: "rgb(20, 19, 19)",
-                    textAlign: "center",
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    sx={{ textAlign: "center", color: "cyan", mb: 2 }}
+        {/* posts grid starting */}
+        <Box>
+          {loading ? (
+            <>
+              <Typography>Loading...</Typography>
+            </>
+          ) : (
+            <>
+              {posts.length === 0 ? (
+                <>
+                  <Typography>No posts Found or check console</Typography>
+                </>
+              ) : (
+                <>
+                  <Grid container spacing={4} sx={{ my: 12, mx: 4 }}>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                      <Link href="/dashboard/post/new" passHref>
+                        <Box
+                          sx={{
+                            border: "2px dashed cyan",
+                            borderRadius: 2,
+                            padding: 4,
+                            height: "100%",
+                            textAlign: "center",
+                            transition: "0.3s",
+                            "&:hover": {
+                              backgroundColor: "rgba(129, 196, 233, 0.1)",
+                              cursor: "pointer",
+                            },
+                          }}
+                        >
+                          <IconButton size="large" sx={{ color: "cyan" }}>
+                            <ControlPointOutlinedIcon
+                              sx={{ fontSize: 100, mx: "auto" }}
+                            />
+                          </IconButton>
+                          <Typography
+                            variant="body1"
+                            sx={{ fontWeight: "bold", mt: 1 }}
+                          >
+                            Add New Post
+                          </Typography>
+                        </Box>
+                      </Link>
+                    </Grid>
+                    {posts?.map((post) => (
+                      <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post._id}>
+                        <Card
+                          sx={{
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            transition: "0.3s",
+                            "&:hover": {
+                              transform: "scale(1.03)",
+                              boxShadow: 6,
+                            },
+                          }}
+                        >
+                          <CardMedia
+                            onClick={() => handleOpen(post.imgPost)}
+                            component="img"
+                            image={post.imgPost}
+                            alt="Post Image"
+                            sx={{
+                              objectFit: "cover",
+                              height: "300px",
+                              ":hover": { cursor: "pointer" },
+                            }}
+                          />
+                          <CardContent
+                            sx={{
+                              backgroundColor: "rgb(20, 19, 19)",
+                              textAlign: "center",
+                            }}
+                          >
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                textAlign: "center",
+                                color: "cyan",
+                                mb: 2,
+                              }}
+                            >
+                              {post.caption}
+                            </Typography>
+                            <Button
+                              onClick={() => handleDelete(post._id)}
+                              variant="outlined"
+                              color="error"
+                            >
+                              Delete
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      display: "flex",
+                      alignContent: "center",
+                      justifyContent: "center",
+                    }}
                   >
-                    {post.caption}
-                  </Typography>
-                  <Button
-                    onClick={() => handleDelete(post._id)}
-                    variant="outlined"
-                    color="error"
-                  >
-                    Delete
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+                    <Button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      variant="outlined"
+                    >
+                      &larr; Prev
+                    </Button>
+                    <Typography my={1} mx={3}>
+                      Page {currentPage} of {totalPages}
+                    </Typography>
+                    <Button
+                      onClick={() =>
+                        setCurrentPage((prev) =>
+                          Math.min(prev + 1, totalPages || posts.length / 5)
+                        )
+                      }
+                      variant="outlined"
+                    >
+                      Next &rarr;
+                    </Button>
+                  </Stack>
+                </>
+              )}
+            </>
+          )}
+        </Box>
       </Container>
 
       <Dialog

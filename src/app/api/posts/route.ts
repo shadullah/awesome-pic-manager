@@ -23,6 +23,8 @@ export async function POST(req: Request) {
             }, { status: 401 });
         }
 
+        
+
         const formData = await req.formData();
         const caption = formData.get('caption') as string;
         const imageFile = formData.get('image') as File;
@@ -40,12 +42,12 @@ export async function POST(req: Request) {
             size: imageFile.size
         });
 
-        // Convert File to buffer for Supabase storage
+        // convert file to buffer for supabase storage
         const arrayBuffer = await imageFile.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        const fileName = `${Date.now()}-${imageFile.name.replace(/\s+/g, '_')}`;
+        const fileName = `${Date.now()}-${imageFile.name}`;
 
-        // Ensure buffer is not empty
+        // buffer is not empty
         if (buffer.length === 0) {
             console.error("Empty buffer");
             return Response.json({
@@ -107,11 +109,12 @@ export async function POST(req: Request) {
 
             user.posts.push(newPost);
             await user.save();
+
+            
             
             return Response.json({
                 success: true,
-                message: "Post created successfully",
-                post: newPost
+                message: "Post created successfully"
             }, { status: 201 });
         } catch (uploadError) {
             console.error("Unexpected upload error:", uploadError);
@@ -130,7 +133,7 @@ export async function POST(req: Request) {
     }
 }
 
-export async function GET() {
+export async function GET(req:Request) {
     await dbConnect()
 
     try {
@@ -144,6 +147,11 @@ export async function GET() {
             }, { status: 401 });
         }
 
+        const { searchParams } = new URL(req.url);
+        const page = parseInt(searchParams.get("page") || "1");
+        const limit = parseInt(searchParams.get("limit") || "5");
+        const skip = (page - 1) * limit;
+
         const user = await UserModel.findOne({ _id: session?.user?.id });
             if (!user) {
                 console.error("User not found:", session.user.id);
@@ -153,8 +161,15 @@ export async function GET() {
                 }, { status: 404 });
             }
 
-            return Response.json({
-                success:true, posts:user.posts
+            const totalPosts = user.posts.length;
+            const ttlpages = Math.ceil(totalPosts/limit)
+            const paginatedPosts = [...user.posts]
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+            .slice(skip, skip + limit);
+
+        return Response.json({
+                success:true, posts:paginatedPosts,
+                totalPosts, ttlpages
             }, {status:200})
     } catch (error) {
         console.error("Error Reading the posts:", error);
