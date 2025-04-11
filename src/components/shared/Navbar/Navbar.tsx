@@ -32,7 +32,7 @@ export default function Navbar() {
                 size="medium"
                 edge="start"
                 aria-label="logo"
-                sx={{ color: "orange" }}
+                sx={{ color: "cyan" }}
               >
                 <AutoAwesomeMosaicIcon />
               </IconButton>
@@ -40,7 +40,7 @@ export default function Navbar() {
                 <Typography
                   variant="h5"
                   sx={{
-                    color: "orange",
+                    color: "cyan",
                     fontWeight: "bold",
                     textTransform: "uppercase",
                   }}

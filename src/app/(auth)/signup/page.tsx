@@ -89,7 +89,7 @@ export default function SignUpForm() {
         <Typography
           variant="h4"
           gutterBottom
-          sx={{ color: "orange", fontWeight: "bold" }}
+          sx={{ color: "cyan", fontWeight: "bold" }}
         >
           Sign Up
         </Typography>
@@ -97,7 +97,7 @@ export default function SignUpForm() {
           Already have an Account?{" "}
         </Typography>
         <Link href="/signin">
-          <Typography sx={{ textDecoration: "underline", color: "orange" }}>
+          <Typography sx={{ textDecoration: "underline", color: "cyan" }}>
             Sign In
           </Typography>
         </Link>
@@ -141,7 +141,7 @@ export default function SignUpForm() {
             disabled={isSubmitting}
             sx={{
               mt: "20px",
-              backgroundColor: "orange",
+              backgroundColor: "cyan",
               color: "white",
               "&.Mui-disabled": {
                 backgroundColor: "greenyellow",

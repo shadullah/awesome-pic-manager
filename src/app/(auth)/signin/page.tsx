@@ -77,7 +77,7 @@ const Signin = () => {
           <Typography
             component="h1"
             variant="h4"
-            sx={{ mb: 3, fontWeight: "bold", color: "orange" }}
+            sx={{ mb: 3, fontWeight: "bold", color: "cyan" }}
           >
             Sign In
           </Typography>
@@ -85,7 +85,7 @@ const Signin = () => {
             Not Signed Up Yet?{" "}
           </Typography>
           <Link href="/signup">
-            <Typography sx={{ textDecoration: "underline", color: "orange" }}>
+            <Typography sx={{ textDecoration: "underline", color: "cyan" }}>
               Sign Up
             </Typography>
           </Link>
@@ -133,7 +133,7 @@ const Signin = () => {
               disabled={isLoading}
               sx={{
                 mt: "20px",
-                backgroundColor: "orange",
+                backgroundColor: "cyan",
                 color: "white",
                 "&.Mui-disabled": {
                   backgroundColor: "greenyellow",

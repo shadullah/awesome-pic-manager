@@ -2,7 +2,7 @@
 import {
   Box,
   Card,
-  CardContent,
+  // CardContent,
   CardMedia,
   Container,
   Grid,
@@ -50,7 +50,10 @@ const HomePage = () => {
         <Box sx={{ textAlign: "center", my: "30px" }}>
           <Stack direction="row" sx={{ justifyContent: "center", mb: "10px" }}>
             <Typography variant="h6">Hello, </Typography>
-            <Typography variant="h6" sx={{ color: "orange" }}>
+            <Typography
+              variant="h6"
+              sx={{ color: "cyan", textTransform: "uppercase", ml: 1 }}
+            >
               {session?.user?.name}
             </Typography>
           </Stack>
@@ -63,52 +66,59 @@ const HomePage = () => {
           </Typography>
         </Box>
         <Grid container spacing={4} sx={{ my: 12, mx: 4 }}>
-          <Link href="/dashboard/post/new">
-            <Box
-              sx={{
-                border: "2px solid",
-                borderColor: "grey.500",
-                padding: 5,
-                borderRadius: 1,
-              }}
-            >
-              <IconButton
-                size="large"
-                edge="start"
-                aria-label="icon"
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Link href="/dashboard/post/new" passHref>
+              <Box
                 sx={{
-                  color: "orange",
-                  mx: "auto",
+                  border: "2px dashed cyan",
+                  borderRadius: 2,
+                  padding: 4,
+                  height: "100%",
+                  textAlign: "center",
+                  transition: "0.3s",
+                  "&:hover": {
+                    backgroundColor: "rgba(255,165,0,0.1)",
+                    cursor: "pointer",
+                  },
                 }}
               >
-                <ControlPointOutlinedIcon sx={{ fontSize: "100px" }} />
-              </IconButton>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: "orange",
-                  fontWeight: "bold",
-                  textTransform: "uppercase",
-                }}
-              >
-                Add new Post
-              </Typography>
-            </Box>
-          </Link>
+                <IconButton size="large" sx={{ color: "cyan" }}>
+                  <ControlPointOutlinedIcon sx={{ fontSize: 150 }} />
+                </IconButton>
+                <Typography variant="body1" sx={{ fontWeight: "bold", mt: 1 }}>
+                  Add New Post
+                </Typography>
+              </Box>
+            </Link>
+          </Grid>
           {posts?.map((post) => (
-            <Grid key={post?._id} item xs={12} sm={6} md={4}>
-              <Card>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post._id}>
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  transition: "0.3s",
+                  "&:hover": {
+                    transform: "scale(1.03)",
+                    boxShadow: 6,
+                  },
+                }}
+              >
                 <CardMedia
                   component="img"
-                  height="140"
                   image={post.imgPost}
-                  alt="Item 1"
+                  alt="Post Image"
+                  sx={{ objectFit: "cover", height: "300px" }}
                 />
-                <CardContent>
-                  <Typography variant="h6" sx={{ textAlign: "center" }}>
+                {/* <CardContent sx={{ backgroundColor: "#1e1e1e", flexGrow: 1 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ textAlign: "center", color: "cyan" }}
+                  >
                     {post.caption}
                   </Typography>
-                </CardContent>
+                </CardContent> */}
               </Card>
             </Grid>
           ))}

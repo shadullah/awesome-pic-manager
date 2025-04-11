@@ -45,7 +45,7 @@ const Footer = () => {
             >
               {/* Social Media Icons */}
               <IconButton
-                sx={{ color: "white", "&:hover": { color: "violet" } }}
+                sx={{ color: "white", "&:hover": { color: "cyan" } }}
                 component="a"
                 href="https://instagram.com"
               >

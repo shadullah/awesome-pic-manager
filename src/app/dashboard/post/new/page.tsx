@@ -3,7 +3,14 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import React, { useState } from "react";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 interface postForm {
   caption: string;
@@ -11,6 +18,8 @@ interface postForm {
 }
 
 const AddNewPost = () => {
+  const [isLoading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -28,6 +37,8 @@ const AddNewPost = () => {
   };
 
   const handlePostCreate: SubmitHandler<postForm> = async (data) => {
+    setLoading(true);
+
     if (!image) {
       toast.error("Please upload an image");
       return;
@@ -52,6 +63,8 @@ const AddNewPost = () => {
         error instanceof Error ? error.message : "An unknown error occurred";
       toast.error(errorMessage);
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,7 +83,7 @@ const AddNewPost = () => {
           gap: 3,
         }}
       >
-        <Typography variant="h5" color="orange" fontWeight="bold">
+        <Typography variant="h5" color="cyan" fontWeight="bold">
           Create New Post
         </Typography>
 
@@ -86,7 +99,7 @@ const AddNewPost = () => {
           sx={{
             "& .MuiOutlinedInput-root": {
               "& fieldset": { borderColor: "gray" },
-              "&:hover fieldset": { borderColor: "orange" },
+              "&:hover fieldset": { borderColor: "cyan" },
             },
           }}
         />
@@ -102,11 +115,11 @@ const AddNewPost = () => {
           variant="contained"
           fullWidth
           sx={{
-            backgroundColor: "orange",
+            backgroundColor: "cyan",
             color: "white",
             fontWeight: "bold",
             "&:hover": {
-              backgroundColor: "darkorange",
+              backgroundColor: "darkcyan",
             },
             "&.Mui-disabled": {
               backgroundColor: "lightgray",
@@ -116,7 +129,14 @@ const AddNewPost = () => {
           }}
           disabled={!image}
         >
-          ADD NOW
+          {isLoading ? (
+            <>
+              <CircularProgress size={24} sx={{ mr: 1, color: "inherit" }} />
+              <span>Adding post...</span>
+            </>
+          ) : (
+            "Add New Post"
+          )}
         </Button>
       </Box>
     </Container>
