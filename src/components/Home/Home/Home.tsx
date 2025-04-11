@@ -2,6 +2,7 @@
 import {
   AppBar,
   Box,
+  Button,
   Card,
   CardContent,
   CardMedia,
@@ -22,6 +23,7 @@ import Link from "next/link";
 import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import toast from "react-hot-toast";
 interface Post {
   _id: string;
   imgPost: string;
@@ -70,6 +72,29 @@ const HomePage = () => {
     };
     fetchPosts();
   }, []);
+
+  const handleDelete = async (postId: string) => {
+    const confirmation = window.confirm("Are you sure to delete the post?");
+    if (!confirmation) return;
+
+    try {
+      const res = await fetch("/api/posts", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPosts(posts.filter((post) => post._id !== postId));
+        toast.success("deleete success", { duration: 2000 });
+      }
+    } catch (error) {
+      console.log("error deleting post", error);
+      toast.error("delete failed", { duration: 2000 });
+    }
+  };
 
   return (
     <div>
@@ -123,7 +148,6 @@ const HomePage = () => {
           {posts?.map((post) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post._id}>
               <Card
-                onClick={() => handleOpen(post.imgPost)}
                 sx={{
                   height: "100%",
                   display: "flex",
@@ -136,23 +160,35 @@ const HomePage = () => {
                 }}
               >
                 <CardMedia
+                  onClick={() => handleOpen(post.imgPost)}
                   component="img"
                   image={post.imgPost}
                   alt="Post Image"
-                  sx={{ objectFit: "cover", height: "300px" }}
+                  sx={{
+                    objectFit: "cover",
+                    height: "300px",
+                    ":hover": { cursor: "pointer" },
+                  }}
                 />
                 <CardContent
                   sx={{
                     backgroundColor: "rgb(20, 19, 19)",
-                    flexGrow: 1,
+                    textAlign: "center",
                   }}
                 >
                   <Typography
                     variant="h6"
-                    sx={{ textAlign: "center", color: "cyan" }}
+                    sx={{ textAlign: "center", color: "cyan", mb: 2 }}
                   >
                     {post.caption}
                   </Typography>
+                  <Button
+                    onClick={() => handleDelete(post._id)}
+                    variant="outlined"
+                    color="error"
+                  >
+                    Delete
+                  </Button>
                 </CardContent>
               </Card>
             </Grid>

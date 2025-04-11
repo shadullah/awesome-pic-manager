@@ -3,6 +3,13 @@ import dbConnect from "@/lib/dbConnet";
 import { supabase } from "@/lib/supabaseClient";
 import UserModel from "@/model/User";
 
+export interface Post {
+    _id: string
+    imgPost: string;
+    caption: string;
+    createdAt: Date;
+  }
+
 export async function POST(req: Request) {
     await dbConnect();
     try {
@@ -149,6 +156,72 @@ export async function GET() {
             return Response.json({
                 success:true, posts:user.posts
             }, {status:200})
+    } catch (error) {
+        console.error("Error Reading the posts:", error);
+        return Response.json({
+            success: false, 
+            message: `Error Reading post: ${error instanceof Error ? error.message : 'Unknown error'}`
+        }, { status: 500 });
+    }
+}
+
+export async function DELETE(req:Request){
+    await dbConnect()
+    try {
+        const session = await auth()
+        if(!session || !session.user){
+            return Response.json({
+                success: false,
+                message: "Authentication required"
+            }, { status: 401 });
+        }
+        const {postId}= await req.json()
+        console.log(postId);
+        if(!postId){
+            return Response.json({
+                success: false,
+                message: "Post ID is required"
+            }, { status: 400 });
+        }
+
+        const user = await UserModel.findById({_id:session.user.id})
+        if (!user) {
+            return Response.json({
+                success: false,
+                message: "User not found"
+            }, { status: 404 });
+        }
+
+        console.log("psot index");
+        const postIndex = await user.posts.findIndex((post:Post)=>post._id.toString() === postId)
+
+        if(postIndex===-1){
+            return Response.json({
+                success: false,
+                message: "Post not found"
+            }, { status: 404 });
+        }
+
+        // deleting post from user array
+        const deletedPost = user.posts.splice(postIndex, 1)[0]
+        await user.save()
+
+        // deleting img from supabase
+        const filename=deletedPost.imgPost.split("/").pop()
+        const {error}= await supabase.storage.from("awesome-img-manager").remove([filename])
+        if (error) {
+            console.error("Supabase delete error:", error);
+            return Response.json({
+                success: false,
+                message: `Error deleting image from Supabase: ${error.message}`
+            }, { status: 500 });
+        }
+
+        return Response.json({
+            success: true,
+            message: "Post deleted successfully"
+        }, { status: 200 });
+
     } catch (error) {
         console.error("Error Reading the posts:", error);
         return Response.json({
