@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+  },
+  webpack:(config,{isServer})=>{
+    if(!isServer){
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        mongoose:false
+      }
+    }
+    return config
   }
 };
 

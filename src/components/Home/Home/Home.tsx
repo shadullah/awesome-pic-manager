@@ -234,7 +234,7 @@ const HomePage = () => {
                       onClick={() =>
                         setCurrentPage((prev) => Math.max(prev - 1, 1))
                       }
-                      variant="outlined"
+                      variant="contained"
                     >
                       &larr; Prev
                     </Button>
@@ -247,7 +247,7 @@ const HomePage = () => {
                           Math.min(prev + 1, totalPages || posts.length / 5)
                         )
                       }
-                      variant="outlined"
+                      variant="contained"
                     >
                       Next &rarr;
                     </Button>
