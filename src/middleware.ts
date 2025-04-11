@@ -11,7 +11,7 @@ export const config={
         '/signin',
         'signup',
         '/',
-        '/dashboard/path*',
+        '/dashboard/:path*',
         '/api/:path*'
     ],
     runtime:'nodejs'
