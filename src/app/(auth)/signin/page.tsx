@@ -12,6 +12,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 const Signin = () => {
   const router = useRouter();
@@ -38,6 +39,7 @@ const Signin = () => {
         setError(result.error);
       } else if (result?.ok) {
         router.push("/");
+        toast.success("Signed In successfully!!", { duration: 3000 });
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -52,14 +54,24 @@ const Signin = () => {
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            p: 3,
-            borderRadius: 2,
-            boxShadow: 1,
-            bgcolor: "gray",
+            my: "60px",
+            input: {
+              color: "white",
+            },
+            label: {
+              color: "gray",
+            },
+            border: {
+              color: "gray",
+            },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "gray",
+              },
+              "&:hover fieldset": {
+                borderColor: "gray",
+              },
+            },
           }}
         >
           <Typography
@@ -98,7 +110,7 @@ const Signin = () => {
               name="email"
               autoComplete="email"
               autoFocus
-              variant="outlined"
+              variant="standard"
             />
 
             <TextField
@@ -110,15 +122,25 @@ const Signin = () => {
               type="password"
               id="credentials-password"
               autoComplete="current-password"
-              variant="outlined"
+              variant="standard"
             />
 
             <Button
               type="submit"
-              fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
+              color="primary"
+              fullWidth
               disabled={isLoading}
+              sx={{
+                mt: "20px",
+                backgroundColor: "orange",
+                color: "white",
+                "&.Mui-disabled": {
+                  backgroundColor: "greenyellow",
+                  color: "white",
+                  opacity: 1,
+                },
+              }}
             >
               {isLoading ? (
                 <>
@@ -126,7 +148,7 @@ const Signin = () => {
                     size={24}
                     sx={{ mr: 1, color: "inherit" }}
                   />
-                  Signing in...
+                  <span>Signing In...</span>
                 </>
               ) : (
                 "Sign In"

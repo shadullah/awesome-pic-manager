@@ -1,11 +1,19 @@
 "use client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, TextField, Typography, Container } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Typography,
+  Container,
+  CircularProgress,
+} from "@mui/material";
 // import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schemas/signUpSchema";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import toast from "react-hot-toast";
 
 interface SignUpFormInputs {
   fullname: string;
@@ -39,6 +47,9 @@ export default function SignUpForm() {
       if (response.ok) {
         alert(result.message);
         router.push("/signin");
+        toast.success("Signed Up successfully!!, Login Now.", {
+          duration: 3000,
+        });
       } else {
         alert(result.message);
       }
@@ -55,6 +66,7 @@ export default function SignUpForm() {
       <Container
         maxWidth="xs"
         sx={{
+          my: "60px",
           input: {
             color: "white",
           },
@@ -74,14 +86,26 @@ export default function SignUpForm() {
           },
         }}
       >
-        <Typography variant="h4" gutterBottom sx={{ color: "orange" }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ color: "orange", fontWeight: "bold" }}
+        >
           Sign Up
         </Typography>
+        <Typography component="h1" variant="body1">
+          Already have an Account?{" "}
+        </Typography>
+        <Link href="/signin">
+          <Typography sx={{ textDecoration: "underline", color: "orange" }}>
+            Sign In
+          </Typography>
+        </Link>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
             label="Full Name"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             {...register("fullname")}
@@ -90,7 +114,7 @@ export default function SignUpForm() {
 
           <TextField
             label="Email"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             {...register("email")}
@@ -101,7 +125,7 @@ export default function SignUpForm() {
           <TextField
             label="Password"
             type="password"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             {...register("password")}
@@ -116,16 +140,24 @@ export default function SignUpForm() {
             fullWidth
             disabled={isSubmitting}
             sx={{
+              mt: "20px",
               backgroundColor: "orange",
               color: "white",
               "&.Mui-disabled": {
-                backgroundColor: "lightcyan",
+                backgroundColor: "greenyellow",
                 color: "white",
                 opacity: 1,
               },
             }}
           >
-            {isSubmitting ? "Signing Up..." : "Sign Up"}
+            {isSubmitting ? (
+              <>
+                <CircularProgress size={24} sx={{ mr: 1, color: "inherit" }} />
+                <span>Signing Up...</span>
+              </>
+            ) : (
+              "Sign Up"
+            )}
           </Button>
         </form>
       </Container>
