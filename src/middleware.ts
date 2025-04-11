@@ -9,9 +9,8 @@ export { auth as middleware } from "@/auth"
 export const config={
     matcher:[
         '/signin',
-        'signup',
+        '/signup',
         '/',
-        '/dashboard/:path*',
         '/api/:path*'
     ],
     runtime:'nodejs'
