@@ -56,9 +56,13 @@ const AddNewPost = () => {
       });
       console.log(res);
 
-      toast.success("New Post added", { duration: 3000 });
-      router.push("/");
-    } catch (error: unknown) {
+      if (res.ok) {
+        toast.success("New Post added", { duration: 3000 });
+        router.push("/");
+      } else {
+        toast.error("Anthorized!!", { duration: 3000 });
+      }
+    } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
       toast.error(errorMessage);
