@@ -1,29 +1,56 @@
 "use client";
 import {
+  AppBar,
   Box,
   Card,
-  // CardContent,
+  CardContent,
   CardMedia,
   Container,
+  Dialog,
+  DialogContent,
   Grid,
   IconButton,
+  Slide,
   Stack,
+  Toolbar,
   Typography,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import ControlPointOutlinedIcon from "@mui/icons-material/ControlPointOutlined";
 import Link from "next/link";
-
+import { TransitionProps } from "@mui/material/transitions";
+import Image from "next/image";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 interface Post {
   _id: string;
   imgPost: string;
   caption: string;
 }
 
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<unknown>;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const HomePage = () => {
   const { data: session } = useSession();
-  // console.log(session?.user.email);
+  const [open, setOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const handleOpen = (imgUrl: string) => {
+    setSelectedImage(imgUrl);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setSelectedImage(null);
+    setOpen(false);
+  };
 
   const [posts, setPosts] = useState<Post[]>([]);
 
@@ -61,7 +88,7 @@ const HomePage = () => {
             {posts.length > 0 ? (
               <>You have total {posts.length} Posts.</>
             ) : (
-              <>Your Gellary is empty now.</>
+              <>Your Gallery is empty now.</>
             )}
           </Typography>
         </Box>
@@ -77,13 +104,15 @@ const HomePage = () => {
                   textAlign: "center",
                   transition: "0.3s",
                   "&:hover": {
-                    backgroundColor: "rgba(255,165,0,0.1)",
+                    backgroundColor: "rgba(129, 196, 233, 0.1)",
                     cursor: "pointer",
                   },
                 }}
               >
                 <IconButton size="large" sx={{ color: "cyan" }}>
-                  <ControlPointOutlinedIcon sx={{ fontSize: 150 }} />
+                  <ControlPointOutlinedIcon
+                    sx={{ fontSize: 100, mx: "auto" }}
+                  />
                 </IconButton>
                 <Typography variant="body1" sx={{ fontWeight: "bold", mt: 1 }}>
                   Add New Post
@@ -94,6 +123,7 @@ const HomePage = () => {
           {posts?.map((post) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post._id}>
               <Card
+                onClick={() => handleOpen(post.imgPost)}
                 sx={{
                   height: "100%",
                   display: "flex",
@@ -111,19 +141,53 @@ const HomePage = () => {
                   alt="Post Image"
                   sx={{ objectFit: "cover", height: "300px" }}
                 />
-                {/* <CardContent sx={{ backgroundColor: "#1e1e1e", flexGrow: 1 }}>
+                <CardContent
+                  sx={{
+                    backgroundColor: "rgb(20, 19, 19)",
+                    flexGrow: 1,
+                  }}
+                >
                   <Typography
                     variant="h6"
                     sx={{ textAlign: "center", color: "cyan" }}
                   >
                     {post.caption}
                   </Typography>
-                </CardContent> */}
+                </CardContent>
               </Card>
             </Grid>
           ))}
         </Grid>
       </Container>
+
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+      >
+        <AppBar sx={{ backgroundColor: "grey" }}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleClose}
+              aria-label="close"
+            >
+              <CancelOutlinedIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <DialogContent sx={{ p: 12, backgroundColor: "grey.800" }}>
+          <Image
+            width={1000}
+            height={1000}
+            src={selectedImage ?? "/vercel.svg"}
+            alt="Preview"
+            style={{ width: "100%", height: "auto", objectFit: "cover" }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
