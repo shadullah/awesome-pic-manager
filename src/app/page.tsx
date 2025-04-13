@@ -1,9 +1,10 @@
 import HomePage from "@/components/Home/Home/Home";
+import { Container } from "@mui/material";
 
 export default function Home() {
   return (
-    <div>
+    <Container>
       <HomePage />
-    </div>
+    </Container>
   );
 }

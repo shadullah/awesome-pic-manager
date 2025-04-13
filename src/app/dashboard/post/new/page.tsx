@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Container,
   TextField,
   Typography,
 } from "@mui/material";
@@ -75,7 +74,7 @@ const AddNewPost = () => {
   };
 
   return (
-    <Container maxWidth="sm">
+    <div>
       <Box
         component="form"
         onSubmit={handleSubmit(handlePostCreate)}
@@ -145,7 +144,7 @@ const AddNewPost = () => {
           )}
         </Button>
       </Box>
-    </Container>
+    </div>
   );
 };
 
