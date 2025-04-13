@@ -75,7 +75,7 @@ const HomePage = () => {
           setPosts(data.posts);
           setLoggedIn(true);
         } else {
-          console.log("Something went wrong", res.status, res.statusText);
+          console.log("Something went wrong", res.statusText);
         }
       } catch (error) {
         console.log("error fetching posts", error);
