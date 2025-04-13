@@ -24,6 +24,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import toast from "react-hot-toast";
+import NoAccountsIcon from "@mui/icons-material/NoAccounts";
 interface Post {
   _id: string;
   imgPost: string;
@@ -44,6 +45,7 @@ const HomePage = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const handleOpen = (imgUrl: string) => {
     setSelectedImage(imgUrl);
@@ -65,11 +67,15 @@ const HomePage = () => {
         const res = await fetch(`/api/posts?page=${currentPage}`, {
           method: "GET",
         });
+        console.log(res);
         const data = await res.json();
         if (data.success) {
           console.log(data);
           setTotalPages(data?.ttlpages);
           setPosts(data.posts);
+          setLoggedIn(true);
+        } else {
+          console.log("Something went wrong", res.status, res.statusText);
         }
       } catch (error) {
         console.log("error fetching posts", error);
@@ -134,8 +140,41 @@ const HomePage = () => {
             <>
               <>
                 <Grid container spacing={4} sx={{ my: 12, mx: 4 }}>
-                  <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                    <Link href="/dashboard/post/new" passHref>
+                  {loggedIn ? (
+                    <>
+                      <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                        <Link href="/dashboard/post/new" passHref>
+                          <Box
+                            sx={{
+                              border: "2px dashed cyan",
+                              borderRadius: 2,
+                              padding: 4,
+                              height: "100%",
+                              textAlign: "center",
+                              transition: "0.3s",
+                              "&:hover": {
+                                backgroundColor: "rgba(129, 196, 233, 0.1)",
+                                cursor: "pointer",
+                              },
+                            }}
+                          >
+                            <IconButton size="large" sx={{ color: "cyan" }}>
+                              <ControlPointOutlinedIcon
+                                sx={{ fontSize: 100, mx: "auto" }}
+                              />
+                            </IconButton>
+                            <Typography
+                              variant="body1"
+                              sx={{ fontWeight: "bold", mt: 1 }}
+                            >
+                              Add New Post
+                            </Typography>
+                          </Box>
+                        </Link>
+                      </Grid>
+                    </>
+                  ) : (
+                    <>
                       <Box
                         sx={{
                           border: "2px dashed cyan",
@@ -151,19 +190,17 @@ const HomePage = () => {
                         }}
                       >
                         <IconButton size="large" sx={{ color: "cyan" }}>
-                          <ControlPointOutlinedIcon
-                            sx={{ fontSize: 100, mx: "auto" }}
-                          />
+                          <NoAccountsIcon sx={{ fontSize: 100, mx: "auto" }} />
                         </IconButton>
                         <Typography
-                          variant="body1"
+                          variant="h3"
                           sx={{ fontWeight: "bold", mt: 1 }}
                         >
-                          Add New Post
+                          Log in First to Unlock the feature of this website
                         </Typography>
                       </Box>
-                    </Link>
-                  </Grid>
+                    </>
+                  )}
                   {posts?.map((post) => (
                     <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post._id}>
                       <Card

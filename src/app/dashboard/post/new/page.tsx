@@ -60,7 +60,9 @@ const AddNewPost = () => {
         toast.success("New Post added", { duration: 3000 });
         router.push("/");
       } else {
-        toast.error("Anthorized!!", { duration: 3000 });
+        toast.error("Unthorized!! Please login to Add Post", {
+          duration: 3000,
+        });
       }
     } catch (error) {
       const errorMessage =
